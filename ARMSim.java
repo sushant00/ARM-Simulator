@@ -2,7 +2,9 @@ package application;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.Scanner;
 /**
@@ -11,8 +13,8 @@ import java.util.Scanner;
  *
  */
 
-//TODO error print, write data, comment fetch, initialise stack pointer, add stacck pointer in r13
-// pg 4-11 setting flags, added more variables
+//TODO write data, initialise stack pointer
+//added more variables
 public class ARMSim {
 	
 	// Main Memory
@@ -59,6 +61,18 @@ public class ARMSim {
 		Rn=0;
 		Rd=0;
 		Operand2=0;
+		
+		Operand1Val=0;
+		Operand2Val=0;
+		result=0;
+		
+		P=0;
+		U=0;
+		B=0;
+		W=0;
+		L=0;
+		
+		R[13]=3996; //INITIALIZE STACK POINTER AS 1000
 	}
 	
 	
@@ -106,7 +120,24 @@ public class ARMSim {
 	 * This method prints the values as stored in data memory to an "output.mem" file
 	 */
 	public void writeMem(){
-		
+		PrintWriter out=null;
+		try
+		{
+			out=new PrintWriter(new FileWriter("output.mem"));
+			for(int i=0;i<4000;i+=4)
+			{
+				out.println(Integer.toHexString(i)+" " + Long.toHexString(Mem[i]));
+			}
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if(out!=null)
+				out.close();
+		}
 	}
 	
 	
@@ -115,10 +146,10 @@ public class ARMSim {
 		while(true)
 		{
 			fetch();
-//			decode();
-//			execute();
-//			memory();
-//			writeBack();
+			decode();
+			execute();
+			memory();
+			writeBack();
 		}
 	}	
 	/**
@@ -233,11 +264,11 @@ public class ARMSim {
 			// F = 1 means Data Transfer instructions
 			else if(F==1 && Cond==14){
 
-				P = Integer.parseInt(binary.substring(7,8));
-				U = Integer.parseInt(binary.substring(7,8));
-				B = Integer.parseInt(binary.substring(7,8));
-				W = Integer.parseInt(binary.substring(7,8));
-				L = Integer.parseInt(binary.substring(7,8));
+				P = Integer.parseInt(binary.substring(8,9));
+				U = Integer.parseInt(binary.substring(9,10));
+				B = Integer.parseInt(binary.substring(10,11));
+				W = Integer.parseInt(binary.substring(11,12));
+				L = Integer.parseInt(binary.substring(12,13));
 				
 				if(B==0){
 					switch(L){
@@ -377,11 +408,11 @@ public class ARMSim {
 					finalAddress = R[Rn];						
 				}
 			}
-			switch(OpCode){
-			case 24: Mem[(int)finalAddress] = R[Rd];
+			switch(L){
+			case 0: Mem[(int)finalAddress] = R[Rd];
 					System.out.println("Write "+R[Rd]+" to address 0x"+Long.toHexString(finalAddress));
 					break;
-			case 25: 
+			case 1: 
 					result = Mem[(int)finalAddress];	//read from memory
 					System.out.println("Read "+result+" from address 0x"+Long.toHexString(finalAddress));
 					break;
@@ -528,9 +559,6 @@ public class ARMSim {
 				R[Rd]=result;
 				System.out.println("write "+result+" to R"+Rd);
 			}
-		}
-		else if(F==2){
-			System.out.println("No WriteBack");
 		}
 		else if(F==0){
 			R[Rd]=result;
