@@ -183,7 +183,7 @@ public class ARMSim {
 		}else{
 			System.out.print("DECODE: Operation is ");
 			// F = 0 means Data Processing instructions
-			if(F==0){
+			if(F==0 && Cond==14){
 				switch(OpCode){
 					case 0: System.out.println("AND");
 							break;
@@ -231,7 +231,7 @@ public class ARMSim {
 			}
 			
 			// F = 1 means Data Transfer instructions
-			else if(F==1){
+			else if(F==1 && Cond==14){
 
 				P = Integer.parseInt(binary.substring(7,8));
 				U = Integer.parseInt(binary.substring(7,8));
