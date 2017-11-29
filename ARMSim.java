@@ -145,29 +145,36 @@ public class ARMSim {
 		Rd = Integer.parseInt(binary.substring(16, 20), 2);
 		Operand2 = Integer.parseInt(binary.substring(20), 2);
 		//TODO only if condition is true ???
+		
 		// F = 3 means Software Interrupt
 		if (F==3){
-			System.out.print("DECODE: Software Interrupt SWI ");
-//			switch(OpCode){
-//				case 0: System.out.println("AND");
-//						break;
-//				case 1: System.out.println("EOR");
-//						break;
-//				case 2: System.out.println("SUB");
-//						break;
-//				case 4: System.out.println("ADD");
-//						break;
-//				case 5: System.out.println("ADC");
-//						break;	
-//				case 10: System.out.println("CMP");
-//						break;	
-//				case 12: System.out.println("ORR");
-//						break;	
-//				case 13: System.out.println("MOV");
-//						break;	
-//				case 15: System.out.println("MVN");
-//						break;							
-//			}
+			if(Cond==14 && binary.substring(4,8).equals("1111")){
+				System.out.print("DECODE: Software Interrupt SWI_");
+				int interrupt = Integer.parseInt(binary.substring(24), 2);
+				switch(interrupt){
+					// swi 0x00
+					case 0:System.out.println("PrChr");
+							System.out.println((char)R[0]);
+							break;
+					// swi 0x11
+					case 17:System.out.println("Exit");
+							swi_exit();
+							break;
+					// swi 0x6b
+					case 107:System.out.println("PrInt");
+						if(R[0]==1){
+							System.out.println(R[1]);
+						}
+							break;
+					// swi 0x6c
+					case 108:System.out.println("RdInt");
+						if(R[0]==0){
+							Scanner sc = new Scanner(System.in);
+							R[0] = sc.nextInt();
+						}
+							break;
+				}
+			}
 			
 		}else{
 			System.out.print("DECODE: Operation is ");
