@@ -12,7 +12,7 @@ import java.util.Scanner;
  */
 
 //TODO error print, write data, comment fetch, initialise stack pointer, add stacck pointer in r13
-// pg 4-11 setting flags
+// pg 4-11 setting flags, added more variables
 public class ARMSim {
 	
 	// Main Memory
@@ -33,7 +33,8 @@ public class ARMSim {
 	long result; 					// result to be stored in destination register
 	
 	int pc;							// Program Counter
-	int L;							// Branch and link if l=1 else branch
+	int P, U, B, W;					// Pre/post index, Up/down, Byte/Word, Writeback bit
+	int L;							// Branch Link Bit or Load(1)/Store(0) bit
 	
 	/**
 	 * This function initialises all variables to start
@@ -61,7 +62,9 @@ public class ARMSim {
 	}
 	
 	
-	
+	/**
+	 * this function halts the simulation/ execution
+	 */
 	private void swi_exit(){
 		writeMem();		// write the data memory
 		System.exit(0);
@@ -171,6 +174,7 @@ public class ARMSim {
 						if(R[0]==0){
 							Scanner sc = new Scanner(System.in);
 							R[0] = sc.nextInt();
+							sc.close();
 						}
 							break;
 				}
@@ -249,13 +253,28 @@ public class ARMSim {
 			
 			// F = 1 means Data Transfer instructions
 			else if(F==1){
-				switch(OpCode){
-				case 24: System.out.println("STR");
-						break;
-				case 25: System.out.println("LDR");
-						break;
-				}
+
+				P = Integer.parseInt(binary.substring(7,8));
+				U = Integer.parseInt(binary.substring(7,8));
+				B = Integer.parseInt(binary.substring(7,8));
+				W = Integer.parseInt(binary.substring(7,8));
+				L = Integer.parseInt(binary.substring(7,8));
 				
+				if(B==0){
+					switch(L){
+					case 0: System.out.println("STR");
+							break;
+					case 1: System.out.println("LDR");
+							break;
+					}
+				}else{					
+					switch(L){
+					case 0: System.out.println("STRB");
+							break;
+					case 1: System.out.println("LDRB");
+							break;
+					}
+				}
 				System.out.print(", Base Register is R"+Rn);
 				System.out.print(", Destination Register is R"+Rd);
 				
@@ -345,7 +364,40 @@ public class ARMSim {
 	public void memory(){
 		System.out.print("MEMORY: ");
 		if(F==1){
-			long finalAddress = Operand1Val + Operand2Val;		// address at base register + offset
+			long finalAddress = 0;
+			if(B==0){//WORD BASED
+				if(P==0){//post
+					finalAddress = Operand1Val;
+					if(U==0){//Down
+						R[Rn] -= Operand2Val;
+					}else{//Up
+						R[Rn] += Operand2Val;							
+					}
+				}else{//pre
+					if(U==0){//Down
+						R[Rn] -= Operand2Val;
+					}else{//Up
+						R[Rn] += Operand2Val;
+					}
+					finalAddress = R[Rn];						
+				}
+			}else{//BYTE BASED
+				if(P==0){//post
+					finalAddress = Operand1Val;
+					if(U==0){//Down
+						R[Rn] -= Operand2Val;
+					}else{//Up
+						R[Rn] += Operand2Val;							
+					}
+				}else{//pre
+					if(U==0){//Down
+						R[Rn] -= Operand2Val;
+					}else{//Up
+						R[Rn] += Operand2Val;
+					}
+					finalAddress = R[Rn];						
+				}
+			}
 			switch(OpCode){
 			case 24: Mem[(int)finalAddress] = R[Rd];
 					System.out.println("Write "+R[Rd]+" to address 0x"+Long.toHexString(finalAddress));
@@ -359,6 +411,141 @@ public class ARMSim {
 		else{// F=0,2,3
 			System.out.println("No memory operation");
 		}
+	}
+	
+
+	/**
+	 * Execute() : that will tell what we going to execute
+	 * @return : void
+	 * 
+	 */
+	
+	public void execute(){
+		System.out.println("EXECUTE :");
+		if(F==0){
+			switch(OpCode){
+			case 0:
+				System.out.println("AND"+" "+Operand1Val+" and "+Operand2Val);
+				
+				result=Operand1Val&Operand2Val;
+				
+				break;
+			case 2:
+				
+				System.out.println("SUB"+" "+Operand1Val+" and "+Operand2Val);
+				
+				result=Operand1Val-Operand2Val;
+				
+				break;
+			case 4:
+				System.out.println("ADD"+" "+Operand1Val+" and "+Operand2Val);
+				
+				result=Operand1Val+Operand2Val;
+				
+				break;
+			case 10:
+				Z=0;N=0;
+				System.out.println("CMP"+" "+Operand1Val+" and "+Operand2Val);
+			    
+				if(Operand1Val-Operand2Val==0){
+			    	
+			    	Z=Z+1;
+			    	System.out.println("Z updated");
+			    }
+			    else if(Operand1Val-Operand2Val<1){
+			    	N=N+1;
+			    	System.out.println("N updated");
+			    }
+			    
+				break;
+			case 12:
+				
+				System.out.println("OR"+" "+Operand1Val+" and "+Operand2Val);
+		
+				result=Operand1Val | Operand2Val;
+				
+				break;
+			case 13:
+				System.out.println("MOV "+Operand2Val+" in R"+Rd);
+				
+				result=Operand2Val;
+				break;
+			case 15:
+				
+				System.out.println("MVN"+" of "+Operand2Val+" ( MOV ~ operandvalue)");
+			//	
+				result=~Operand2Val;
+				
+				break;
+			}
+			}
+		else if(F==2){
+			 int tempval=0;
+			switch(Cond){
+			case 0: System.out.print("EQ");//equal
+					if(Z==1){
+						tempval=1;
+					}
+					break;
+			case 1: System.out.print("NE");//not equal
+					if(Z==0){
+						tempval=1;
+					}
+					break;
+			case 10: System.out.print("GE");//greater than or equal
+					if(N==0 || Z==1){
+						tempval=1;
+					}
+					break;
+			case 11: System.out.print("LT");// less than
+					if(N==1){
+						tempval=1;
+					}
+					break;
+			case 12: System.out.print("GT");// greater than
+					if(N==0){
+						tempval=1;
+					}
+					break;	
+			case 13: System.out.println("LE");// less than or equal
+					if(N==1 || Z==1){
+						tempval=1;
+					}
+					break;	
+			case 14: System.out.println("AL");//always
+					break;	
+					}
+			String binary = Long.toBinaryString(Operand2Val);
+			binary = String.join(""+Collections.nCopies(24-binary.length(), "0"));
+			
+		}
+		else{
+			System.out.println("No Execution");
+		}
+	}
+	public void writeBack(){
+		System.out.println("WriteBack :");
+		if(F==1){
+			switch(L){
+			case 0:
+				System.out.println("No WriteBack");
+			case 1:
+				R[Rd]=result;
+				System.out.println("write "+result+" to R"+Rd);
+			}
+		}
+		else if(F==2){
+			System.out.println("No WriteBack");
+		}
+		else if(F==0){
+			R[Rd]=result;
+			System.out.println("write "+result+" to R"+Rd);
+			
+		}
+		else {
+			System.out.println("No WriteBack");
+		}
+		
 	}
 	
 	public void runARMSim(){
