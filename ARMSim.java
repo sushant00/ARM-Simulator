@@ -182,27 +182,6 @@ public class ARMSim {
 			
 		}else{
 			System.out.print("DECODE: Operation is ");
-
-			switch(OpCode){
-				case 0: System.out.println("AND");
-						break;
-				case 1: System.out.println("EOR");
-						break;
-				case 2: System.out.println("SUB");
-						break;
-				case 4: System.out.println("ADD");
-						break;
-				case 5: System.out.println("ADC");
-						break;	
-				case 10: System.out.println("CMP");
-						break;	
-				case 12: System.out.println("ORR");
-						break;	
-				case 13: System.out.println("MOV");
-						break;	
-				case 15: System.out.println("MVN");
-						break;							
-			}
 			// F = 0 means Data Processing instructions
 			if(F==0){
 				switch(OpCode){
@@ -480,47 +459,63 @@ public class ARMSim {
 			}
 			}
 		else if(F==2){
-			 int tempval=0;
+			 boolean branching=false;
 			switch(Cond){
 			case 0: System.out.print("EQ");//equal
 					if(Z==1){
-						tempval=1;
+						branching=true;
 					}
 					break;
 			case 1: System.out.print("NE");//not equal
 					if(Z==0){
-						tempval=1;
+						branching=true;
 					}
 					break;
 			case 10: System.out.print("GE");//greater than or equal
 					if(N==0 || Z==1){
-						tempval=1;
+						branching=true;
 					}
 					break;
 			case 11: System.out.print("LT");// less than
 					if(N==1){
-						tempval=1;
+						branching=true;
 					}
 					break;
 			case 12: System.out.print("GT");// greater than
 					if(N==0){
-						tempval=1;
+						branching=true;
 					}
 					break;	
-			case 13: System.out.println("LE");// less than or equal
+			case 13: System.out.print("LE");// less than or equal
 					if(N==1 || Z==1){
-						tempval=1;
+						branching=true;
 					}
 					break;	
-			case 14: System.out.println("AL");//always
+			case 14: System.out.print("AL");//always
+					branching = true;
 					break;	
 					}
-			String binary = Long.toBinaryString(Operand2Val);
-			binary = String.join(""+Collections.nCopies(24-binary.length(), "0"));
+			if(branching){
+				String offsetBinary = Long.toBinaryString(instruction).substring(8);
+				offsetBinary = String.join(""+Collections.nCopies(6, offsetBinary.charAt(0) )) + offsetBinary + "00";
+				long offset = Long.parseLong(offsetBinary);
+								
+				if(L==0){	//Branch
+					pc+=offset;
+					R[15]+=offset;
+				}else{		//Branch with link
+					R[14] = pc;
+					pc+=offset;
+					R[15]+=offset;
+				}
+				System.out.println("Program Counter changed to "+pc);
+			}else{
+				System.out.println("No execute operation");
+			}
 			
 		}
 		else{
-			System.out.println("No Execution");
+			System.out.println("No execute operation");
 		}
 	}
 	public void writeBack(){
