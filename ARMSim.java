@@ -13,8 +13,6 @@ import java.util.Scanner;
  *
  */
 
-//TODO write data, initialise stack pointer
-//added more variables
 public class ARMSim {
 	
 	// Main Memory
@@ -81,6 +79,7 @@ public class ARMSim {
 	 */
 	private void swi_exit(){
 		writeMem();		// write the data memory
+		System.out.println("EXIT");
 		System.exit(0);
 	}
 	
@@ -140,18 +139,7 @@ public class ARMSim {
 		}
 	}
 	
-	
-	
-	public void simulate(){
-		while(true)
-		{
-			fetch();
-			decode();
-			execute();
-			memory();
-			writeBack();
-		}
-	}	
+
 	/**
 	 * This method fetches the instruction from memory and increments the program counter
 	 */
@@ -165,9 +153,10 @@ public class ARMSim {
 	/**
 	 * This method decodes the instruction word
 	 */
-	public void decode(){
+	public void decode(){		
 		String binary = Long.toBinaryString(instruction);
-		binary = String.join(""+Collections.nCopies(32-binary.length(), "0")); // add 0s to make 32 bit
+		binary = String.join("",Collections.nCopies(32-binary.length(), "0")) + binary; // add 0s to make 32 bit
+
 		
 		// get the required bits and store value in control and decode variables 
 		Cond = Integer.parseInt(binary.substring(0, 4), 2); 
@@ -216,23 +205,23 @@ public class ARMSim {
 			// F = 0 means Data Processing instructions
 			if(F==0 && Cond==14){
 				switch(OpCode){
-					case 0: System.out.println("AND");
+					case 0: System.out.print("AND");
 							break;
-					case 1: System.out.println("EOR");
+					case 1: System.out.print("EOR");
 							break;
-					case 2: System.out.println("SUB");
+					case 2: System.out.print("SUB");
 							break;
-					case 4: System.out.println("ADD");
+					case 4: System.out.print("ADD");
 							break;
-					case 5: System.out.println("ADC");
+					case 5: System.out.print("ADC");
 							break;	
-					case 10: System.out.println("CMP");
+					case 10: System.out.print("CMP");
 							break;	
-					case 12: System.out.println("ORR");
+					case 12: System.out.print("ORR");
 							break;	
-					case 13: System.out.println("MOV");
+					case 13: System.out.print("MOV");
 							break;	
-					case 15: System.out.println("MVN");
+					case 15: System.out.print("MVN");
 							break;							
 				}
 				//TODO why check Rn == 0/ not, initialise operand1 if necessary
@@ -264,24 +253,24 @@ public class ARMSim {
 			// F = 1 means Data Transfer instructions
 			else if(F==1 && Cond==14){
 
-				P = Integer.parseInt(binary.substring(8,9));
-				U = Integer.parseInt(binary.substring(9,10));
-				B = Integer.parseInt(binary.substring(10,11));
-				W = Integer.parseInt(binary.substring(11,12));
-				L = Integer.parseInt(binary.substring(12,13));
+				P = Integer.parseInt(binary.substring(7,8), 2);
+				U = Integer.parseInt(binary.substring(8,9), 2);
+				B = Integer.parseInt(binary.substring(9,10), 2);
+				W = Integer.parseInt(binary.substring(10,11), 2);
+				L = Integer.parseInt(binary.substring(11,12), 2);
 				
 				if(B==0){
 					switch(L){
-					case 0: System.out.println("STR");
+					case 0: System.out.print("STR");
 							break;
-					case 1: System.out.println("LDR");
+					case 1: System.out.print("LDR");
 							break;
 					}
 				}else{					
 					switch(L){
-					case 0: System.out.println("STRB");
+					case 0: System.out.print("STRB");
 							break;
-					case 1: System.out.println("LDRB");
+					case 1: System.out.print("LDRB");
 							break;
 					}
 				}
@@ -338,7 +327,7 @@ public class ARMSim {
 							break;	
 				}
 				//TODO operand val is 2s comp, pc + sign extend(shift two left)
-				Operand2Val = Integer.parseInt(binary.substring(8));
+				Operand2Val = Integer.parseInt(binary.substring(8), 2);
 				System.out.println(", Offset is "+Operand2Val);				
 			}
 		}
@@ -352,7 +341,7 @@ public class ARMSim {
 	 */
 	private long getImmediateValue(int operand){
 		String operand2 = Integer.toBinaryString(operand);
-		operand2 = String.join(""+Collections.nCopies(12-operand2.length(), "0")); // add 0s to make 12 bit
+		operand2 = String.join("", Collections.nCopies((12-operand2.length()) , "0")) + operand2; // add 0s to make 12 bit
 		
 		String number = operand2.substring(4);
 		number = "000000000000000000000000"+number;		// pad with 24 0s
@@ -431,7 +420,7 @@ public class ARMSim {
 	 */
 	
 	public void execute(){
-		System.out.println("EXECUTE :");
+		System.out.print("EXECUTE: ");
 		if(F==0){
 			switch(OpCode){
 			case 0:
@@ -492,52 +481,56 @@ public class ARMSim {
 		else if(F==2){
 			 boolean branching=false;
 			switch(Cond){
-			case 0: System.out.print("EQ");//equal
+			case 0: System.out.print("EQ ");//equal
 					if(Z==1){
 						branching=true;
 					}
 					break;
-			case 1: System.out.print("NE");//not equal
+			case 1: System.out.print("NE ");//not equal
 					if(Z==0){
 						branching=true;
 					}
 					break;
-			case 10: System.out.print("GE");//greater than or equal
+			case 10: System.out.print("GE ");//greater than or equal
 					if(N==0 || Z==1){
 						branching=true;
 					}
 					break;
-			case 11: System.out.print("LT");// less than
+			case 11: System.out.print("LT ");// less than
 					if(N==1){
 						branching=true;
 					}
 					break;
-			case 12: System.out.print("GT");// greater than
+			case 12: System.out.print("GT ");// greater than
 					if(N==0){
 						branching=true;
 					}
 					break;	
-			case 13: System.out.print("LE");// less than or equal
+			case 13: System.out.print("LE ");// less than or equal
 					if(N==1 || Z==1){
 						branching=true;
 					}
 					break;	
-			case 14: System.out.print("AL");//always
+			case 14: System.out.print("AL ");//always
 					branching = true;
 					break;	
 					}
 			if(branching){
-				String offsetBinary = Long.toBinaryString(instruction).substring(8);
-				offsetBinary = String.join(""+Collections.nCopies(6, offsetBinary.charAt(0) )) + offsetBinary + "00";
-				long offset = Long.parseLong(offsetBinary);
+				String offsetBinary = Long.toBinaryString(Operand2Val);
+				System.out.println(Integer.parseInt(offsetBinary, 2));
+				offsetBinary = String.join("",Collections.nCopies(6, String.valueOf(offsetBinary.charAt(0)) )) + offsetBinary + "00";
+				long offset = Long.parseLong(offsetBinary, 2);
+				//System.out.println(Integer.toBinaryString(offset));
 								
 				if(L==0){	//Branch
 					pc+=offset;
-					R[15]+=offset;
+					pc+=4;
+					R[15]=pc;
 				}else{		//Branch with link
 					R[14] = pc;
 					pc+=offset;
-					R[15]+=offset;
+					pc+=4;
+					R[15] = pc;
 				}
 				System.out.println("Program Counter changed to "+pc);
 			}else{
@@ -549,13 +542,15 @@ public class ARMSim {
 			System.out.println("No execute operation");
 		}
 	}
+	
+	
 	public void writeBack(){
-		System.out.println("WriteBack :");
+		System.out.print("WRITEBACK: ");
 		if(F==1){
 			switch(L){
 			case 0:
 				System.out.println("No WriteBack");
-			case 1:
+			case 1:	
 				R[Rd]=result;
 				System.out.println("write "+result+" to R"+Rd);
 			}
@@ -570,6 +565,21 @@ public class ARMSim {
 		}
 		
 	}
+	
+	
+	
+	public void simulate(){
+		while(true)
+		{
+			fetch();
+			decode();
+			execute();
+			memory();
+			writeBack();			
+			System.out.println();System.out.println();
+		}
+	}	
+	
 	
 	public void runARMSim(){
 		init(); 			// reset the processor
