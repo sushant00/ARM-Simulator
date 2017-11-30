@@ -480,6 +480,7 @@ public class ARMSim {
 			}
 		else if(F==2){
 			 boolean branching=false;
+			 System.out.print("B");
 			switch(Cond){
 			case 0: System.out.print("EQ ");//equal
 					if(Z==1){
@@ -517,10 +518,8 @@ public class ARMSim {
 					}
 			if(branching){
 				String offsetBinary = Long.toBinaryString(Operand2Val);
-				System.out.println(Integer.parseInt(offsetBinary, 2));
 				offsetBinary = String.join("",Collections.nCopies(6, String.valueOf(offsetBinary.charAt(0)) )) + offsetBinary + "00";
 				long offset = Long.parseLong(offsetBinary, 2);
-				//System.out.println(Integer.toBinaryString(offset));
 								
 				if(L==0){	//Branch
 					pc+=offset;
