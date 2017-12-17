@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="933.0" prefWidth="1249.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.GUIController">
+   <children>
+      <Pane prefHeight="933.0" prefWidth="1249.0">
+         <children>
+            <ScrollPane fx:id="registerView" layoutY="56.0" prefHeight="883.0" prefWidth="200.0">
+               <content>
+                  <TextArea fx:id="txtRegister" prefHeight="882.0" prefWidth="198.0" />
+               </content>
+            </ScrollPane>
+            <ScrollPane fx:id="stackView" layoutX="1049.0" layoutY="56.0" prefHeight="749.0" prefWidth="200.0">
+               <content>
+                  <TextArea fx:id="txtStack" prefHeight="729.0" prefWidth="199.0" />
+               </content>
+            </ScrollPane>
+            <Pane layoutX="1.0" prefHeight="55.0" prefWidth="1249.0">
+               <children>
+                  <Button fx:id="btnRun" layoutX="454.0" mnemonicParsing="false" onMouseClicked="#stop" prefHeight="55.0" prefWidth="152.0" text="Stop" />
+                  <Button fx:id="btnStepInto" layoutX="1.0" mnemonicParsing="false" onMouseClicked="#stepInto" prefHeight="55.0" prefWidth="158.0" text="Step Into" />
+                  <Button fx:id="btnReload" layoutX="158.0" mnemonicParsing="false" onMouseClicked="#reload" prefHeight="55.0" prefWidth="152.0" text="Reload" />
+                  <Button fx:id="btnStop" layoutX="310.0" mnemonicParsing="false" onMouseClicked="#run" prefHeight="55.0" prefWidth="144.0" text="Run" />
+                  <TextField fx:id="fileName" layoutX="606.0" layoutY="-1.0" prefHeight="55.0" prefWidth="186.0" />
+               </children>
+            </Pane>
+            <ScrollPane fx:id="memView" layoutX="200.0" layoutY="55.0" prefHeight="366.0" prefWidth="850.0">
+               <content>
+                  <TextArea fx:id="txtMemView" prefHeight="365.0" prefWidth="848.0" />
+               </content>
+            </ScrollPane>
+            <ScrollPane fx:id="outputView" layoutX="200.0" layoutY="421.0" prefHeight="383.0" prefWidth="850.0">
+               <content>
+                  <TextArea fx:id="txtOutputView" prefHeight="381.0" prefWidth="850.0" />
+               </content>
+            </ScrollPane>
+            <TextArea fx:id="consoleInput" layoutX="732.0" layoutY="805.0" prefHeight="130.0" prefWidth="518.0" />
+            <TextArea fx:id="consoleOutput" layoutX="199.0" layoutY="805.0" prefHeight="130.0" prefWidth="532.0" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
