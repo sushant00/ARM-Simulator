@@ -28,7 +28,7 @@ In other words as soon as instruction reads “0xEF000011”, simulator stops
 and writes the updated memory contents on to a memory text file. 
 
 The simulator also prints messages for each stage
-for example for the third instruction above following messages are printed.
+for example:
 
 -	<b>Fetch prints:</b>
     o	“FETCH:Fetch instruction 0xE3A0200A from address 0x0” 
