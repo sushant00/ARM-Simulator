@@ -47,3 +47,16 @@ for example for the third instruction above following messages are printed.
 
     
 </p></pre>
+<br>
+<br>
+
+<h4 align="center">ARM-GUI</h4>
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/23396919/34083182-01a29c4c-e392-11e7-9291-fbe084ae892c.png" width="450"></img><br><br>
+<img src="https://user-images.githubusercontent.com/23396919/34083179-fe96f534-e391-11e7-80f6-99007d6b6aba.png" width="450"></img><br><br>
+<img src="https://user-images.githubusercontent.com/23396919/34083176-fb1044c4-e391-11e7-8d2f-77120ef47e44.png" width="450"></img><br><br>
+<img src="https://user-images.githubusercontent.com/23396919/34083176-fb1044c4-e391-11e7-8d2f-77120ef47e44.png" width="450"></img><br><br>
+</p>
