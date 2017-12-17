@@ -29,20 +29,20 @@ and writes the updated memory contents on to a memory text file.
 The simulator also prints messages for each stage
 for example for the third instruction above following messages are printed.
 
--	Fetch prints:
+-	<b>Fetch prints:</b>
     o	“FETCH:Fetch instruction 0xE3A0200A from address 0x0” 
     
--	Decode
+-	<b>Decode</b>
     o	“DECODE: Operation is ADD, first operand R2, Second operand R3, destination register R1”
     o	“DECODE:  Read registers R2 = 10, R3 = 2”
     
--	Execute
+-	<b>Execute</b>
     o	“EXECUTE: ADD 10 and 2”
     
--	Memory
+-	<b>Memory</b>
     o	“MEMORY:No memory  operation”
     
--	Write-back
+-	<b>Write-back</b>
     o	“WRITEBACK: write 12 to R1”
 
     
