@@ -7,7 +7,8 @@
 
 -----------------------------------------------------------------------------------------------------------------------------------
 
-Adarsh Kumar Choudhary     [adarshk007](https://github.com/adarshk007)
+Adarsh Kumar Choudhary  [adarshk007](https://github.com/adarshk007)
+<br>
 Sushant Kumar Singh        [sushant00](https://github.com/sushant00)
 
 <br>
