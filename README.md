@@ -12,7 +12,7 @@ Adarsh Kumar Choudhary  [adarshk007](https://github.com/adarshk007)
 Sushant Kumar Singh        [sushant00](https://github.com/sushant00)
 
 <br>
-<h3 align="center"> Description</h3>
+<h4 align="center"> Description</h4>
 
 --------------------------------------------------------------------------------------------------------------------------------
 
